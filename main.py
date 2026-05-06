@@ -1,8 +1,8 @@
 import fastapi
 import uvicorn
-import requests
 from Exceptions import GlobalExceptionHandler
 from Models.MovieMetadata import MovieMetadata
+from Exceptions.MovieExistsException import MovieExistsException
 
 import config
 import os
@@ -13,16 +13,20 @@ app = fastapi.FastAPI()
 GlobalExceptionHandler.register_exception_handlers(app)
 
 
-@app.post("/receive_movie_metadata")
-async def receive_movie_metadata(data: MovieMetadata):
-
-    #creating new directory based on metadata provided by HTTP
-    movie_dir = os.path.join(config.DEFAULT_ROOT_DIR, data.name)
+@app.post("/create_movie_metadata")
+async def create_movie_metadata(movie_data: MovieMetadata):
+    movie_dir = os.path.join(config.DEFAULT_ROOT_DIR, str(movie_data.movie_uuid))
+    
+    # Check if it exists BEFORE trying to create
+    if os.path.exists(movie_dir):
+        raise MovieExistsException(movie_data)
+    
+    # Only create if it doesn't exist
     os.makedirs(movie_dir)
-
+    
     return {"status": "ok"}
 
 
 #without this, uvicorn runs at import time causing errors
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="10.0.0.16", port=8080)
