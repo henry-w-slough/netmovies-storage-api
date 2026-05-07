@@ -7,7 +7,7 @@ import config
 import os
 
 
-app = fastapi.FastAPI()
+app = fastapi.FastAPI(redirect_slashes=False)
 
 #adding exceptions to FastAPI
 GlobalExceptionHandler.register_exception_handlers(app)
