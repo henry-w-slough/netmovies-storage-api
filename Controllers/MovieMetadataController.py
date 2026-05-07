@@ -47,4 +47,4 @@ class MovieMetadataController:
         
         shutil.rmtree(movie_dir)
         
-        return fastapi.responses.JSONResponse(status_code=201, content={"status": "Movie successfully deleted."})
+        return fastapi.responses.JSONResponse(status_code=204, content={"status": "Movie successfully deleted."})
