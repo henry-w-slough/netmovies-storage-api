@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 
 from .MovieExistsException import MovieExistsException
+from .MovieNotFoundException import MovieNotFoundException
 
 
 
@@ -15,9 +16,14 @@ def register_exception_handlers(app: FastAPI):
         return JSONResponse(status_code=422, content={"error": "HTTP request format is invalid.", "detail": str(exc)})
     
 
+    @app.exception_handler(MovieNotFoundException)
+    async def movie_not_found_error(request: Request, exc: MovieNotFoundException):
+        return JSONResponse(status_code=409, content=exc.message)
+    
+
     @app.exception_handler(MovieExistsException)
     async def movie_exists_error(request: Request, exc: MovieExistsException):
-        return JSONResponse(status_code=409, content={"error": "Movie requested for creation already exists on disc and could not be created", "detail": f"Movie UUID: {exc.movie_data.movie_uuid}, Movie Name: {exc.movie_data.name}"})
+        return JSONResponse(status_code=409, content=exc.message)
 
 
     #general exceptions not caught previously

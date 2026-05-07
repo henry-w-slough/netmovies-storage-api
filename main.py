@@ -19,4 +19,4 @@ movie_metadata_controller = MovieMetadataController(app)
 
 #without this, uvicorn runs at import time causing errors
 if __name__ == "__main__":
-    uvicorn.run(app, host="10.0.0.16", port=8080)
+    uvicorn.run(app, host=config.STORAGE_IP, port=config.STORAGE_PORT)
