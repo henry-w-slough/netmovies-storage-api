@@ -25,6 +25,7 @@ class MovieMetadataController:
 
     async def create_movie_directory(self, movie_metadata: MovieMetadata):
         """POST handler that creates a new directory based on the UUID of the HTTP request holding the movie metadata."""
+        
         movie_dir = os.path.join(config.DEFAULT_ROOT_DIR, str(movie_metadata.storage_id))
         # Check if it exists BEFORE trying to create
         if os.path.exists(movie_dir):
