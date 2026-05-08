@@ -9,6 +9,7 @@ from Exceptions.MovieExistsException import MovieExistsException
 from Exceptions.MovieNotFoundException import MovieNotFoundException
 
 
+
 class MovieMetadataController:
 
 
@@ -20,7 +21,6 @@ class MovieMetadataController:
         #and have no need to combine any endpoints with the same url prefix
         app.post("/movies")(self.create_movie_directory)
         app.delete("/movies/{storage_id}")(self.delete_movie_by_storage_id)
-
 
 
     async def create_movie_directory(self, movie_metadata: MovieMetadata):
@@ -47,4 +47,5 @@ class MovieMetadataController:
         
         shutil.rmtree(movie_dir)
         
-        return fastapi.responses.JSONResponse(status_code=204, content={"status": "Movie successfully deleted."})
+        return fastapi.responses.JSONResponse(status_code=200, content={"status": "Movie successfully deleted."})
+
