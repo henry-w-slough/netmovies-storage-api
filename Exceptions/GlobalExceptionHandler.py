@@ -13,7 +13,7 @@ def register_exception_handlers(app: FastAPI):
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request: Request, exc: RequestValidationError):
-        return JSONResponse(status_code=422, content={"error": "HTTP request format is invalid.", "detail": str(exc)})
+        return JSONResponse(status_code=422, content={"error": "The format of the HTTP request received is invalid.", "detail": str(exc)})
     
 
     @app.exception_handler(MovieNotFoundException)

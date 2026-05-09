@@ -19,8 +19,8 @@ class MovieMetadataController:
         #routing the post for create_movie_metadata through the app directly
         #we don't use a Router here because it's just overkill, we only are using the metadata temporarily
         #and have no need to combine any endpoints with the same url prefix
-        app.post("/movies")(self.create_movie_directory)
-        app.delete("/movies/{storage_id}")(self.delete_movie_by_storage_id)
+        app.post("/movie")(self.create_movie_directory)
+        app.delete("/movie/{storage_id}")(self.delete_movie_by_storage_id)
 
 
     async def create_movie_directory(self, movie_metadata: MovieMetadata):
