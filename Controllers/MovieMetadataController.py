@@ -1,12 +1,12 @@
 import shutil
 from uuid import UUID
-
 import fastapi
 import config
 import os
+from Utilities import DataAttacher
 from Models.MovieMetadata import MovieMetadata
-from Exceptions.MovieExistsException import MovieExistsException
 from Exceptions.MovieNotFoundException import MovieNotFoundException
+import json
 
 
 
@@ -19,20 +19,20 @@ class MovieMetadataController:
         #routing the post for create_movie_metadata through the app directly
         #we don't use a Router here because it's just overkill, we only are using the metadata temporarily
         #and have no need to combine any endpoints with the same url prefix
-        app.post("/movie")(self.create_movie_directory)
-        app.delete("/movie/{storage_id}")(self.delete_movie_by_storage_id)
+        app.post("/movies")(self.create_movie_directory)
+        app.delete("/movies/{storage_id}")(self.delete_movie_by_storage_id)
 
 
-    async def create_movie_directory(self, movie_metadata: MovieMetadata):
+    async def create_movie_directory(self, request:fastapi.Request):
         """POST handler that creates a new directory based on the UUID of the HTTP request holding the movie metadata."""
         
-        movie_dir = os.path.join(config.DEFAULT_ROOT_DIR, str(movie_metadata.storage_id))
-        # Check if it exists BEFORE trying to create
-        if os.path.exists(movie_dir):
-            raise MovieExistsException(f"Movie of StorageID: {movie_metadata.storage_id} already exists on disk and could not be created.")
-        
-        # Only create if it doesn't exist
-        os.makedirs(movie_dir)
+        request_info = json.loads(await request.body())
+
+        movie_dir = os.path.join(config.DEFAULT_ROOT_DIR, request_info["storage_id"])
+
+        #async data handling for storage
+        #THIS will create the directory inside, no need for os.makedirs()
+        await DataAttacher.attach_data(movie_dir, request_info["data"])
         
         return fastapi.responses.JSONResponse(status_code=201, content={"status": "Movie successfully created."})
     
