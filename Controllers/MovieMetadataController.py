@@ -4,7 +4,6 @@ import fastapi
 import config
 import os
 from Utilities import DataAttacher
-from Models.MovieMetadata import MovieMetadata
 from Exceptions.MovieNotFoundException import MovieNotFoundException
 import json
 
