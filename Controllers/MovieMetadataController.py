@@ -1,5 +1,5 @@
 import shutil
-from uuid import UUID
+import uuid
 import fastapi
 import config
 import os
@@ -18,25 +18,22 @@ class MovieMetadataController:
         #routing the post for create_movie_metadata through the app directly
         #we don't use a Router here because it's just overkill, we only are using the metadata temporarily
         #and have no need to combine any endpoints with the same url prefix
-        app.post("/movies")(self.create_movie_directory)
+        app.post("/movies/{storage_id}")(self.create_movie)
         app.delete("/movies/{storage_id}")(self.delete_movie_by_storage_id)
 
 
-    async def create_movie_directory(self, request:fastapi.Request):
+    async def create_movie(self, storage_id:uuid.UUID, request:fastapi.Request):
         """POST handler that creates a new directory based on the UUID of the HTTP request holding the movie metadata."""
         
-        request_info = await request.body()
-        request_info_json = json.loads(request_info)
+        movie_directory = os.path.join(config.DEFAULT_ROOT_DIR, f"{storage_id}")
+        os.makedirs(movie_directory, exist_ok=True)
+    
+        await DataAttacher.attach_data(movie_directory, request.stream())
 
-        movie_dir = os.path.join(config.DEFAULT_ROOT_DIR, request_info_json["storage_id"])
-        os.makedirs(movie_dir, exist_ok=True)
-        #async data handling for storage
-        await DataAttacher.attach_data(movie_dir, request_info)
-        
         return fastapi.responses.JSONResponse(status_code=201, content={"status": "Movie successfully created."})
     
 
-    async def delete_movie_by_storage_id(self, storage_id:UUID):
+    async def delete_movie_by_storage_id(self, storage_id:uuid.UUID):
         """POST handler that creates a new directory based on the UUID of the HTTP request holding the movie metadata."""
 
         movie_dir = os.path.join(config.DEFAULT_ROOT_DIR, str(storage_id))
