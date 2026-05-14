@@ -26,13 +26,13 @@ class MovieMetadataController:
     async def create_movie_directory(self, request:fastapi.Request):
         """POST handler that creates a new directory based on the UUID of the HTTP request holding the movie metadata."""
         
-        request_info = json.loads(await request.body())
+        request_info = await request.body()
+        request_info_json = json.loads(request_info)
 
-        movie_dir = os.path.join(config.DEFAULT_ROOT_DIR, request_info["storage_id"])
-
+        movie_dir = os.path.join(config.DEFAULT_ROOT_DIR, request_info_json["storage_id"])
+        os.makedirs(movie_dir, exist_ok=True)
         #async data handling for storage
-        #THIS will create the directory inside, no need for os.makedirs()
-        await DataAttacher.attach_data(movie_dir, request_info["data"])
+        await DataAttacher.attach_data(movie_dir, request_info)
         
         return fastapi.responses.JSONResponse(status_code=201, content={"status": "Movie successfully created."})
     
