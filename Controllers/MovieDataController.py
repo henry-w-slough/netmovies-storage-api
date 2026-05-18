@@ -11,7 +11,6 @@ class MovieDataController:
 
     def __init__(self, app:fastapi.FastAPI) -> None:
         """Handles all Movie data related HTTP requests."""
-
         #adding endpoints to fastapi
         app.post("/data/uploadMovieData/{storageId}")(self.uploadMovieData)
 
