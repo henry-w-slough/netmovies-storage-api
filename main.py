@@ -1,22 +1,17 @@
 import fastapi
 import uvicorn
-from Exceptions import GlobalExceptionHandler
-from Controllers.MovieMetadataController import MovieMetadataController
 
+from Controllers import MovieDataController, MovieDirectoryController
 import config
-import os
 
 
-app = fastapi.FastAPI(redirect_slashes=False)
-
-#adding exceptions to FastAPI
-GlobalExceptionHandler.register_exception_handlers(app)
+app = fastapi.FastAPI()
 
 
-#the controller for movie metadata. In __init__() it adds all it's endpoints to app
-movie_metadata_controller = MovieMetadataController(app)
+data_controller = MovieDataController.MovieDataController(app)
+directory_controller = MovieDirectoryController.MovieDirectoryController(app)
 
 
-#without this, uvicorn runs at import time causing errors
 if __name__ == "__main__":
-    uvicorn.run(app, host=config.STORAGE_IP, port=config.STORAGE_PORT)
+    uvicorn.run(app, host=config.STORAGE_HOST, port=config.STORAGE_PORT)
+
