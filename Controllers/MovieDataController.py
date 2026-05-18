@@ -12,7 +12,7 @@ class MovieDataController:
     def __init__(self, app:fastapi.FastAPI) -> None:
         """Handles all Movie data related HTTP requests."""
         #adding endpoints to fastapi
-        app.post("/data/uploadMovieData/{storageId}")(self.uploadMovieData)
+        app.post("/data/uploadMovieData/{storageId:uuid}")(self.uploadMovieData)
 
 
     async def uploadMovieData(self, storageId:uuid.UUID, request:fastapi.Request) -> fastapi.Response:
@@ -22,4 +22,7 @@ class MovieDataController:
         #attaching the movie data stream in the movie directory using MovieDataAssembler
         await MovieDataAssembler.assemble_data(movie_directory, request.stream())
 
-        return fastapi.responses.JSONResponse(status_code=201, content={"storageId": {storageId}})
+        return fastapi.responses.JSONResponse(
+            status_code=200,
+            content={"storageId": str(storageId)}
+        )

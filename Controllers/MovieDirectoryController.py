@@ -15,8 +15,8 @@ class MovieDirectoryController:
         """Handles all Movie directory related HTTP requests."""
 
         #adding endpoints to fastapi
-        app.post("/directory/createMovie/{storageId}")(self.create_movie_directory)
-        app.delete("/directory/deleteMovieByStorageId/{storageId}")
+        app.post("/directory/createMovie/{storageId:uuid}")(self.create_movie_directory)
+        app.delete("/directory/deleteMovieByStorageId/{storageId:uuid}")(self.delete_movie_by_storage_id)
 
 
     async def create_movie_directory(self, storageId:uuid.UUID) -> fastapi.Response:
